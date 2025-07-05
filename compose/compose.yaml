@@ -1,0 +1,22 @@
+# Enter DB with:
+# docker compose exec -it db-ms-sql sh -c '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P ${SA_PASSWORD}'
+
+---
+services:
+  db-ms-sql:
+    container_name: db-ms-sql
+    image: "mcr.microsoft.com/mssql/rhel/server:2025-latest"
+    restart: unless-stopped
+    environment:
+      SA_PASSWORD: "XQvqeN9UqUjoRcmr"
+      ACCEPT_EULA: "Y"
+      TZ: "Europe/Warsaw"
+    ports:
+      - "1433:1433"
+    tmpfs:
+      - "/tmp"
+    volumes:
+      - "db-ms-sql-data:/var/opt/mssql"
+
+volumes:
+  db-ms-sql-data: {}
