@@ -1,8 +1,8 @@
-output "ask_docker_public_ips" {
-  value       = aws_instance.ask_docker_ec2.*.public_ip
-  description = "Public IPs for ASK docker VMs"
+output "tf_docker_public_ips" {
+  value       = aws_instance.tf_docker_ec2.*.public_ip
+  description = "Public IPs for VMs"
 }
 
-output "ask_docker_private_ips" {
-  value = aws_instance.ask_docker_ec2.*.private_ip
+output "tf_docker_private_ips" {
+  value = aws_instance.tf_docker_ec2.*.private_ip
 }
