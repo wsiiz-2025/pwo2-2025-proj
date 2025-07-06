@@ -1,9 +1,10 @@
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
+  
   default_tags {
     tags = {
-      source = "tf-tf-docker"
+      source = "tf"
     }
   }
 }
@@ -13,8 +14,8 @@ resource "aws_key_pair" "main" {
   public_key = var.public_key
 }
 
-resource "aws_security_group" "tf_docker_sg" {
-  name        = "tf-docker-sg"
+resource "aws_security_group" "tf_sg" {
+  name        = "tf-sg"
   description = "Ports to be open for testing the app"
 
   ingress {
@@ -53,21 +54,21 @@ resource "aws_security_group" "tf_docker_sg" {
   }
 }
 
-resource "aws_instance" "tf_docker_ec2" {
+resource "aws_instance" "tf_ec2" {
   count                  = 1
   ami                    = "ami-007855ac798b5175e"
   instance_type          = "t2.medium"
   key_name               = aws_key_pair.main.key_name
-  vpc_security_group_ids = [aws_security_group.tf_docker_sg.id]
-  user_data              = file("install_docker.sh")
+  vpc_security_group_ids = [aws_security_group.tf_sg.id]
+  user_data              = file("install_packages.sh")
 
   root_block_device {
-    volume_size = 100 # in GB
+    volume_size = 100  # in GB
     volume_type = "gp3"
     encrypted   = false
   }
 
   tags = {
-    Name = "${format("tf-docker-%d", count.index)}"
+    Name = "${format("tf-%d", count.index)}"
   }
 }
