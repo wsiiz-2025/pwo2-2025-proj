@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.25.0/service.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-service
+  namespace: infra
+spec:
+  selector:
+    app: mssql
+  type: NodePort
+  ports:
+    - name: mssql
+      port: 389

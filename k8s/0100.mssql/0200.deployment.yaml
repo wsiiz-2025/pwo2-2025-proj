@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.25.0/deployment.json
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql
+  namespace: infra
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: mssql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mssql
+    spec:
+      containers:
+        - name: mssql
+          image: mcr.microsoft.com/mssql/rhel/server:2025-latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: sql
+              containerPort: 1433
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          env:
+            - name: SA_PASSWORD
+              value: "XQvqeN9UqUjoRcmr"
+            - name: ACCEPT_EULA
+              value: "Y"
+            # Other
+            - name: TZ
+              value: "Europe/Warsaw"
+          readinessProbe:
+            tcpSocket:
+              port: 1433
+          livenessProbe:
+            tcpSocket:
+              port: 1433
+          volumeMounts:
+            - name: mssql-data
+              mountPath: "/var/opt/mssql"
+      volumes:
+        - name: mssql-data
+          persistentVolumeClaim:
+            claimName: mssql-data-pvc
