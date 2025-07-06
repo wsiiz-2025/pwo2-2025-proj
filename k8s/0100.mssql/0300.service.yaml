@@ -9,7 +9,9 @@ metadata:
 spec:
   selector:
     app: mssql
-  type: NodePort
+  type: ClusterIP
   ports:
-    - name: mssql
-      port: 389
+    - name: sql
+      protocol: TCP
+      port: 1433
+      targetPort: 1433
