@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/refs/heads/main/src/ansiblelint/schemas/playbook.json
+
+---
+- name: "Helm charts"
+  hosts: aws
+  remote_user: root
+  environment:
+    KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
+  vars:
+    helm_repos:
+      bitnami: "https://charts.bitnami.com/bitnami"
+      kyverno: "https://kyverno.github.io/kyverno"
+      portainer: "https://portainer.github.io/k8s"
+      stakater: "https://stakater.github.io/stakater-charts"
+
+    kube_reloader_namespaces:
+      - infra
+  tasks:
+    - name: "Add helm repositories"
+      loop: >-
+        {{ helm_repos | dict2items }}
+      kubernetes.core.helm_repository:
+        name: >-
+          {{ item.key }}
+        repo_url: >-
+          {{ item.value }}
+
+    - name: "Install Kyverno in the kyverno namespace"
+      kubernetes.core.helm:
+        name: kyverno
+        release_namespace: kyverno
+        chart_repo_url: >-
+          {{ helm_repos['kyverno'] }}
+        create_namespace: true
+        chart_ref: kyverno
+        # https://github.com/kyverno/kyverno/tree/main/charts/kyverno
+        chart_version: "3.4.2"
+        atomic: true
+
+    - name: "Install Portainer in the portainer namespace"
+      kubernetes.core.helm:
+        name: portainer
+        release_namespace: portainer
+        chart_repo_url: >-
+          {{ helm_repos['portainer'] }}
+        create_namespace: true
+        chart_ref: portainer
+        # https://github.com/portainer/k8s/releases
+        chart_version: "1.0.66"
+        atomic: true
+        release_values:
+          image:
+            # https://hub.docker.com/r/portainer/portainer-ce/tags
+            tag: "2.31.1"
+          persistence:
+            enabled: true
+            size: "4Gi"
+            storageClass: "local-path"
+          service:
+            type: "LoadBalancer"
+            httpPort: "38001"
+            # HTTPS is not used.
+            httpsPort: "38002"
+            # Those do not matter.
+            edgeNodePort: "38003"
+            edgePort: "38004"
+          tls:
+            force: false
+
+    - name: "Install Reloader in namespaces"
+      loop: >-
+        {{ kube_reloader_namespaces }}
+      kubernetes.core.helm:
+        name: >-
+          {{ item }}-reloader
+        release_namespace: >-
+          {{ item }}
+        chart_repo_url: >-
+          {{ helm_repos['stakater'] }}
+        create_namespace: true
+        chart_ref: reloader
+        # https://github.com/stakater/Reloader/releases
+        chart_version: "2.1.4"
+        atomic: true
+        release_values:
+          reloader:
+            # Behavior control:
+            watchGlobally: false
+            # Deployment customization:
+            readOnlyRootFileSystem: true
+            deployment:
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "256Mi"
+                limits:
+                  cpu: "2000m"
+                  memory: "2Gi"

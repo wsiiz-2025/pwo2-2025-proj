@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/refs/heads/main/src/ansiblelint/schemas/inventory.json
+
+---
+ungrouped:
+  hosts:
+    aws:
+      # NOTICE: Change me!
+      ansible_host: "aws"

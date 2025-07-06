@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/refs/heads/main/src/ansiblelint/schemas/playbook.json
+
+---
+- name: "Kube infra"
+  hosts: aws
+  remote_user: root
+  environment:
+    KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
+  vars:
+    kube_conf_root: "../k8s/"
+  tasks:
+    - name: "Find config files"
+      register: kube_conf_files
+      delegate_to: localhost
+      ansible.builtin.find:
+        paths: "{{ kube_conf_root }}"
+        patterns: "*.yaml"
+        recurse: true
+
+    - name: "Apply infra"
+      loop: >-
+        {{ kube_conf_files.files | map(attribute='path') | list | sort }}
+      kubernetes.core.k8s:
+        state: present
+        validate:
+          fail_on_error: true
+          strict: true
+        definition: |
+          {{ lookup("file", item) | from_yaml_all }}
