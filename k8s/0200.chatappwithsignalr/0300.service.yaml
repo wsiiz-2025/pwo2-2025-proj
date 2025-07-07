@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.25.0/service.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatappwithsignalr-service
+  namespace: infra
+spec:
+  selector:
+    app: chatappwithsignalr
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.25.0/deployment.json
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatappwithsignalr
+  namespace: infra
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: chatappwithsignalr
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: chatappwithsignalr
+    spec:
+      containers:
+        - name: chatappwithsignalr
+          image: kubaf2k/signalrtestapp:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=mssql-service;Database=aspnet-ChatAppWithSignalR-d0293b87-8b67-42bd-acc6-ca89fe0b5ab5;User Id=SA;Password=XQvqeN9UqUjoRcmr;MultipleActiveResultSets=true;TrustServerCertificate=true;"
+            # Other
+            - name: TZ
+              value: "Europe/Warsaw"
+          readinessProbe:
+            tcpSocket:
+              port: 80
+          livenessProbe:
+            tcpSocket:
+              port: 80
