@@ -21,6 +21,7 @@
         extra_args: "--user"
         state: present
         name:
+          - jsonschema==4.24.0
           - kubernetes
           - kubernetes-validate==1.33.1
 
