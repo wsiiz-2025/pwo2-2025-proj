@@ -22,8 +22,5 @@
         {{ kube_conf_files.files | map(attribute='path') | list | sort }}
       kubernetes.core.k8s:
         state: present
-        validate:
-          fail_on_error: true
-          strict: true
         definition: |
           {{ lookup("file", item) | from_yaml_all }}
