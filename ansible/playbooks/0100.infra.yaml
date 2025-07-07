@@ -7,7 +7,7 @@
   environment:
     KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
   vars:
-    kube_conf_root: "../k8s/"
+    kube_conf_root: "../../k8s/"
   tasks:
     - name: "Find config files"
       register: kube_conf_files
