@@ -2,7 +2,7 @@
 
 ---
 - name: "Helm charts"
-  hosts: aws
+  hosts: all
   remote_user: ubuntu
   environment:
     KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
