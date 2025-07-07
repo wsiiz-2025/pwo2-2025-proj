@@ -3,7 +3,7 @@
 ---
 - name: "Kube infra"
   hosts: aws
-  remote_user: root
+  remote_user: ubuntu
   environment:
     KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
   vars:
