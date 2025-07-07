@@ -31,4 +31,7 @@ pip install --verbose -r ./requirements.txt
 
 ```shell
 export ANSIBLE_CONFIG="$(pwd)/ansible/ansible.cfg"
+mkdir -p .log
+
+ansible-playbook -vv -i "${REMOTE_HOST}," --private-key ~/.ssh/id_ed25519 ./ansible/playbooks/*.yaml
 ```
