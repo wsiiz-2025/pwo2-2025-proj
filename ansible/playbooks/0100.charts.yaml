@@ -16,6 +16,14 @@
     kube_reloader_namespaces:
       - infra
   tasks:
+    - name: "Install kubernetes libraries for ansible"
+      ansible.builtin.pip:
+        extra_args: "--break-system-packages --user"
+        state: present
+        name:
+          - kubernetes
+          - kubernetes-validate==1.33.1
+
     - name: "Add helm repositories"
       loop: >-
         {{ helm_repos | dict2items }}
