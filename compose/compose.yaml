@@ -18,5 +18,20 @@ services:
     volumes:
       - "db-ms-sql-data:/var/opt/mssql"
 
+  chatappwithsignalr:
+    container_name: chatappwithsignalr
+    image: "docker.io/kubaf2k/signalrtestapp:v1"
+    restart: unless-stopped
+    depends_on:
+      - db-ms-sql
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=db-ms-sql;Database=chatappwithsignalr-db;User Id=SA;Password=XQvqeN9UqUjoRcmr;MultipleActiveResultSets=true;TrustServerCertificate=true;"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      TZ: "Europe/Warsaw"
+    ports:
+      - "8080:80"
+    tmpfs:
+      - "/tmp"
+
 volumes:
   db-ms-sql-data: {}
