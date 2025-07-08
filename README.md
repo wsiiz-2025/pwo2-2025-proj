@@ -10,6 +10,16 @@ terraform apply -var "public_key=$(< ~/.ssh/id_ed25519.pub)"
 terraform output
 ```
 
+### TF Output
+
+The `terraform output` command will output both private and public IP addresses
+of provisioned machines.
+Use the public IP as `REMOTE_HOST` env var.
+
+```shell
+export REMOTE_HOST="189.185.123.108"
+```
+
 ## Use K8S via SSH
 
 ```shell
