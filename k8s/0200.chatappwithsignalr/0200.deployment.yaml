@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: chatappwithsignalr
-          image: kubaf2k/signalrtestapp:v1
+          image: kubaf2k/signalrtestapp:v2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
