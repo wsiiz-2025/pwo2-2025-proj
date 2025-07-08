@@ -40,7 +40,7 @@ spec:
             readOnlyRootFilesystem: false
           env:
             - name: ConnectionStrings__DefaultConnection
-              value: "Server=mssql-service;Database=aspnet-ChatAppWithSignalR-d0293b87-8b67-42bd-acc6-ca89fe0b5ab5;User Id=SA;Password=XQvqeN9UqUjoRcmr;MultipleActiveResultSets=true;TrustServerCertificate=true;"
+              value: "Server=mssql-service;Database=chatappwithsignalr-db;User Id=SA;Password=XQvqeN9UqUjoRcmr;MultipleActiveResultSets=true;TrustServerCertificate=true;"
             - name: ASPNETCORE_ENVIRONMENT:
               value: "Development"
             # Other
