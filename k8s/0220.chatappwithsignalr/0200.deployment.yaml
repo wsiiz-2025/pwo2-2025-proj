@@ -41,7 +41,7 @@ spec:
           env:
             - name: ConnectionStrings__DefaultConnection
               value: "Server=mssql-service;Database=chatappwithsignalr-db;User Id=SA;Password=XQvqeN9UqUjoRcmr;MultipleActiveResultSets=true;TrustServerCertificate=true;"
-            - name: ASPNETCORE_ENVIRONMENT:
+            - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
             # Other
             - name: TZ
