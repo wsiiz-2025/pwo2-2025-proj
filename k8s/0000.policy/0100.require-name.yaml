@@ -1,0 +1,32 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-name
+  annotations:
+    policies.kyverno.io/title: "Require Name"
+    policies.kyverno.io/category: "Enforcement"
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: require-name
+      match:
+        resources:
+          kinds:
+            - ConfigMap
+            - CronJob
+            - Deployment
+            - Ingress
+            - Job
+            - PersistentVolumeClaim
+            - Pod
+            - Service
+          namespaces:
+            - infra
+      validate:
+        message: "Metadata 'name' is required"
+        foreach:
+          - list: "request.object.metadata"
+            pattern:
+              name: "?*"

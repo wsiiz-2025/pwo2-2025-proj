@@ -1,0 +1,47 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: ban-tag-latest
+  annotations:
+    policies.kyverno.io/title: "Ban Tag Latest"
+    policies.kyverno.io/category: "Enforcement"
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: ban-tag-latest
+      match:
+        resources:
+          kinds:
+            - CronJob
+            - DaemonSet
+            - Deployment
+            - Job
+            - Pod
+            - StatefulSet
+          namespaces:
+            - infra
+      validate:
+        message: "Using the 'latest' tag for images is banned"
+        foreach:
+          # CronJob
+          - list: "request.object.spec.jobTemplate.spec.template.spec.containers"
+            pattern:
+              image: "!*:latest"
+
+          # Deployment
+          - list: "request.object.spec.template.spec.containers"
+            pattern:
+              image: "!*:latest"
+
+          # Pod
+          - list: "request.object.spec.containers"
+            pattern:
+              image: "!*:latest"
+          - list: "request.object.spec.initContainers"
+            pattern:
+              image: "!*:latest"
+          - list: "request.object.spec.ephemeralContainers"
+            pattern:
+              image: "!*:latest"

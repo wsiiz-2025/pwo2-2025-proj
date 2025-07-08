@@ -1,0 +1,30 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: ban-imagepullpolicy-always
+  annotations:
+    policies.kyverno.io/title: "Ban ImagePullPolicy Always"
+    policies.kyverno.io/category: "Enforcement"
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: ban-imagepullpolicy-always
+      match:
+        resources:
+          kinds:
+            - CronJob
+            - DaemonSet
+            - Deployment
+            - Job
+            - Pod
+            - StatefulSet
+          namespaces:
+            - infra
+      validate:
+        message: "Using the 'Always' imagePullPolicy is banned"
+        foreach:
+          - list: "request.object.spec.template.spec.containers"
+            pattern:
+              imagePullPolicy: "!Always"

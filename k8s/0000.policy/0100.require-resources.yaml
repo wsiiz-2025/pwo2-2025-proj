@@ -1,0 +1,35 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resources
+  annotations:
+    policies.kyverno.io/title: "Require Resources"
+    policies.kyverno.io/category: "Enforcement"
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: require-resources
+      exclude:
+        resources:
+          names:
+            - "*-reloader"
+      match:
+        resources:
+          kinds:
+            - Deployment
+          namespaces:
+            - infra
+      validate:
+        message: "Resource 'requests' and 'limits' are required"
+        foreach:
+          - list: "request.object.spec.template.spec.containers"
+            pattern:
+              resources:
+                requests:
+                  cpu: "?*"
+                  memory: "?*"
+                limits:
+                  cpu: "?*"
+                  memory: "?*"
