@@ -20,7 +20,7 @@ services:
 
   chatappwithsignalr:
     container_name: chatappwithsignalr
-    image: "docker.io/kubaf2k/signalrtestapp:v1"
+    image: "docker.io/kubaf2k/signalrtestapp:v2"
     restart: unless-stopped
     depends_on:
       - db-ms-sql
