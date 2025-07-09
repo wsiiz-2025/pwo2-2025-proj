@@ -67,12 +67,12 @@
             storageClass: "local-path"
           service:
             type: "LoadBalancer"
-            httpPort: "38001"
+            httpPort: "8081"
             # HTTPS is not used.
-            httpsPort: "38002"
+            httpsPort: "8082"
             # Those do not matter.
-            edgeNodePort: "38003"
-            edgePort: "38004"
+            edgeNodePort: "8083"
+            edgePort: "8084"
           tls:
             force: false
 

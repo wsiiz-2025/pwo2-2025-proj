@@ -1,7 +1,7 @@
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
-  
+
   default_tags {
     tags = {
       source = "tf"
@@ -28,6 +28,13 @@ resource "aws_security_group" "tf_sg" {
   ingress {
     from_port   = 8080
     to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
