@@ -25,7 +25,7 @@
     # A bit more steps for the amazing C# variables...
     - name: "Join ConnectionStrings__DefaultConnection"
       set_fact:
-        connectionstrings__defaultconnection: "Server=mssql-service;Database=chatappwithsignalr-db;User Id=SA;Password={{ sa_passowrd }};MultipleActiveResultSets=true;TrustServerCertificate=true;"
+        connectionstrings__defaultconnection: "Server=mssql-service;Database=chatappwithsignalr-db;User Id=SA;Password={{ sa_password }};MultipleActiveResultSets=true;TrustServerCertificate=true;"
 
     - name: "Base64 encode ConnectionStrings__DefaultConnection"
       set_fact:
