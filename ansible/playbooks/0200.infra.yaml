@@ -8,7 +8,46 @@
     KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
   vars:
     kube_conf_root: "../../k8s/"
+
+    kube_secret_names:
+      - "0210.mssql"
+      - "0220.chatappwithsignalr"
+  vars_prompt:
+    - name: sa_password
+      prompt: "Enter SA password for mssql"
+      private: true
   tasks:
+    # Secret encode dance
+    - name: "Base64 encode SA_PASSWORD"
+      set_fact:
+        sa_password_base64: "{{ sa_password | b64encode }}"
+
+    # A bit more steps for the amazing C# variables...
+    - name: "Join ConnectionStrings__DefaultConnection"
+      set_fact:
+        connectionstrings__defaultconnection: "Server=mssql-service;Database=chatappwithsignalr-db;User Id=SA;Password={{ sa_passowrd }};MultipleActiveResultSets=true;TrustServerCertificate=true;"
+
+    - name: "Base64 encode ConnectionStrings__DefaultConnection"
+      set_fact:
+        connectionstrings__defaultconnection_base64: "{{ connectionstrings__defaultconnection | b64encode }}"
+
+    - name: "Render Kube secret templates"
+      loop: >-
+        {{ k8s_secret_names }}
+      template:
+        src: "{{ kube_conf_root }}/{{ item }}/0000.secret.yaml.in"
+        dest: "/tmp/k8s.{{ item }}.0000.secret.yaml"
+
+    - name: "Apply Kube secrets"
+      loop: >-
+        {{ k8s_secret_names }}
+      kubernetes.core.k8s:
+        state: present
+        validate:
+          fail_on_error: true
+          strict: true
+        src: "/tmp/k8s.{{ item }}.0000.secret.yaml"
+
     - name: "Find config files"
       register: kube_conf_files
       delegate_to: localhost
@@ -27,3 +66,10 @@
           strict: true
         definition: |
           {{ lookup("file", item) | from_yaml_all }}
+
+    - name: "Delete rendered secrets"
+      loop: >-
+        {{ k8s_secret_names }}
+      file:
+        state: absent
+        path: "/tmp/k8s.{{ item }}.0000.secret.yaml"
