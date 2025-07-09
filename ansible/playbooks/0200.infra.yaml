@@ -33,14 +33,14 @@
 
     - name: "Render Kube secret templates"
       loop: >-
-        {{ k8s_secret_names }}
+        {{ kube_secret_names }}
       template:
         src: "{{ kube_conf_root }}/{{ item }}/0000.secret.yaml.in"
         dest: "/tmp/k8s.{{ item }}.0000.secret.yaml"
 
     - name: "Apply Kube secrets"
       loop: >-
-        {{ k8s_secret_names }}
+        {{ kube_secret_names }}
       kubernetes.core.k8s:
         state: present
         validate:
@@ -69,7 +69,7 @@
 
     - name: "Delete rendered secrets"
       loop: >-
-        {{ k8s_secret_names }}
+        {{ kube_secret_names }}
       file:
         state: absent
         path: "/tmp/k8s.{{ item }}.0000.secret.yaml"
